@@ -18,8 +18,6 @@ export const StickyScroll = ({
   const [activeCard, setActiveCard] = React.useState(0);
   const ref = useRef<any>(null);
   const { scrollYProgress } = useScroll({
-    // uncomment line 22 and comment line 23 if you DONT want the overflow container and want to have it change on the entire page scroll
-    // target: ref
     container: ref,
     offset: ["start start", "end start"],
   });
@@ -27,16 +25,23 @@ export const StickyScroll = ({
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const cardsBreakpoints = content.map((_, index) => index / cardLength);
-    const closestBreakpointIndex = cardsBreakpoints.reduce(
-      (acc, breakpoint, index) => {
-        const distance = Math.abs(latest - breakpoint);
-        if (distance < Math.abs(latest - cardsBreakpoints[acc])) {
-          return index;
-        }
-        return acc;
-      },
-      0
-    );
+    
+    let closestBreakpointIndex = 0;
+    let minDistance = Math.abs(latest - cardsBreakpoints[0]);
+    
+    for (let i = 1; i < cardsBreakpoints.length; i++) {
+      const distance = Math.abs(latest - cardsBreakpoints[i]);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestBreakpointIndex = i;
+      }
+    }
+    
+    // Special handling for the last card
+    if (latest > 0.75) {
+      closestBreakpointIndex = cardLength - 1;
+    }
+    
     setActiveCard(closestBreakpointIndex);
   });
 
@@ -64,49 +69,88 @@ export const StickyScroll = ({
       animate={{
         backgroundColor: backgroundColors[activeCard % backgroundColors.length],
       }}
-      className="h-[30rem] overflow-y-auto flex justify-center relative space-x-10 rounded-md p-10"
+      className="h-[30rem] overflow-y-auto scrollbar-hide flex justify-center relative space-x-10 rounded-md p-10" // Added scrollbar-hide class to hide scrollbar
       ref={ref}
+      style={{ 
+        scrollbarWidth: 'none', // For Firefox
+        msOverflowStyle: 'none', // For Internet Explorer and Edge
+      }}
     >
-      <div className="div relative flex items-start px-4">
-        <div className="max-w-2xl">
-          {content.map((item, index) => (
-            <div key={item.title + index} className="my-20">
-              <motion.h2
-                initial={{
-                  opacity: 0,
-                }}
-                animate={{
-                  opacity: activeCard === index ? 1 : 0.3,
-                }}
-                className="text-2xl font-bold text-black"
-              >
-                {item.title}
-              </motion.h2>
-              <motion.p
-                initial={{
-                  opacity: 0,
-                }}
-                animate={{
-                  opacity: activeCard === index ? 1 : 0.3,
-                }}
-                className="text-kg text-gray-700 max-w-sm mt-10"
-              >
-                {item.description}
-              </motion.p>
-            </div>
-          ))}
-          <div className="h-40" />
-        </div>
+      <div className="hidden lg:flex flex-col items-start px-4"> {/* Desktop view */}
+        {content.map((item, index) => (
+          <div key={item.title + index} className="mb-20">
+            <motion.h2
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: activeCard === index ? 1 : 0.3,
+              }}
+              className="text-2xl font-bold text-black"
+            >
+              {item.title}
+            </motion.h2>
+            <motion.p
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: activeCard === index ? 1 : 0.3,
+              }}
+              className="text-kg text-gray-700 max-w-sm mt-10"
+            >
+              {item.description}
+            </motion.p>
+          </div>
+        ))}
+        <div className="h-48" />
       </div>
       <div
         style={{ background: backgroundGradient }}
         className={cn(
-          "hidden lg:block h-60 w-80 rounded-md bg-white sticky top-10 overflow-hidden",
+          "hidden lg:block h-60 w-80 rounded-md bg-white sticky top-1 overflow-hidden",
           contentClassName
         )}
       >
         {content[activeCard].content ?? null}
       </div>
+      <MobileStickyScroll content={content} />
     </motion.div>
   );
-}; 
+};
+
+const MobileStickyScroll = ({ content }: { content: any[] }) => {
+  return (
+    <div className="lg:hidden flex flex-col items-center justify-center px-4"> {/* Mobile view */}
+      {content.map((item, index) => (
+        <div key={item.title + index} className="mb-20 text-left">
+          <div className="block mb-4"> {/* Image or content at the top */}
+            {item.content}
+          </div>
+          <motion.h2
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            className="text-2xl font-bold text-black"
+          >
+            {item.title}
+          </motion.h2>
+          <motion.p
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            className="text-kg text-gray-700 max-w-sm mt-2" // Margin between image and title
+          >
+            {item.description}
+          </motion.p>
+        </div>
+      ))}
+    </div>
+  );
+};

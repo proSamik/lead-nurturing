@@ -76,34 +76,36 @@ export const StickyScroll = ({
         msOverflowStyle: 'none', // For Internet Explorer and Edge
       }}
     >
-      <div className="hidden lg:flex flex-col items-start px-4"> {/* Desktop view */}
-        {content.map((item, index) => (
-          <div key={item.title + index} className="mb-20">
-            <motion.h2
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: activeCard === index ? 1 : 0.3,
-              }}
-              className="text-2xl font-bold text-black"
-            >
-              {item.title}
-            </motion.h2>
-            <motion.p
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: activeCard === index ? 1 : 0.3,
-              }}
-              className="text-kg text-gray-700 max-w-sm mt-10"
-            >
-              {item.description}
-            </motion.p>
-          </div>
-        ))}
-        <div className="h-48" />
+      <div className="div relative flex items-start px-4">
+        <div className="max-w-2xl">
+          {content.map((item, index) => (
+            <div key={item.title + index} className="mb-20">
+              <motion.h2
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: activeCard === index ? 1 : 0.3,
+                }}
+                className="text-2xl font-bold text-black"
+              >
+                {item.title}
+              </motion.h2>
+              <motion.p
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{
+                  opacity: activeCard === index ? 1 : 0.3,
+                }}
+                className="text-kg text-gray-700 max-w-sm mt-10"
+              >
+                {item.description}
+              </motion.p>
+            </div>
+          ))}
+          <div className="h-48" />
+        </div>
       </div>
       <div
         style={{ background: backgroundGradient }}
@@ -114,43 +116,6 @@ export const StickyScroll = ({
       >
         {content[activeCard].content ?? null}
       </div>
-      <MobileStickyScroll content={content} />
     </motion.div>
   );
-};
-
-const MobileStickyScroll = ({ content }: { content: any[] }) => {
-  return (
-    <div className="lg:hidden flex flex-col items-center justify-center px-4"> {/* Mobile view */}
-      {content.map((item, index) => (
-        <div key={item.title + index} className="mb-20 text-left">
-          <div className="block mb-4"> {/* Image or content at the top */}
-            {item.content}
-          </div>
-          <motion.h2
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            className="text-2xl font-bold text-black"
-          >
-            {item.title}
-          </motion.h2>
-          <motion.p
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            className="text-kg text-gray-700 max-w-sm mt-2" // Margin between image and title
-          >
-            {item.description}
-          </motion.p>
-        </div>
-      ))}
-    </div>
-  );
-};
+}; 

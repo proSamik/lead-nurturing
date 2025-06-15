@@ -28,12 +28,12 @@ export function CTASection() {
           }}
           className="text-center max-w-4xl mx-auto px-4"
         >
-          <h1 className="bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl mb-16">
+          <h1 className="bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-5xl font-medium tracking-tight text-transparent md:text-7xl">
             Start Collecting Leads<br />
-            <span className="gradient-text mb-4">For Free</span>
+            <span className="gradient-text">For Free</span>
           </h1>
           
-          <p className="text-slate-300 text-xl md:text-2xl mb-12 leading-relaxed">
+          <p className="text-slate-300 text-xl md:text-2xl leading-relaxed mb-16 mt-16 md:mt-8">
             One-time payment. First 1,000 triggered emails are entirely free.<br />
             <span className="text-cyan-400 font-semibold">Join 10,000+ creators who own their growth.</span>
           </p>
